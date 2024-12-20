@@ -1,0 +1,21 @@
+#!/bin/sh
+
+RF=$1
+mailname=$2
+
+# create or update
+python3 $RF/makeusers.py -l --maildirs $RF/maildirlist $mailname
+
+echo Creating mailbox directories
+while read md
+do
+    mkdir -p $md/new $md/cur $md/tmp
+done < $RF/maildirlist
+
+# be sure they all balong to mailuser
+chown -R mailuser:mailuser /home/mailuser/users
+
+# make postfix mailbox DB
+postmap /etc/postfix/vmailbox
+
+echo "Mailbox(es) added."
