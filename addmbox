@@ -4,7 +4,7 @@ RF=$1
 mailname=$2
 
 # create or update
-python3 $RF/makeusers.py -l --maildirs $RF/maildirlist $mailname
+python3 $RF/makeboxes.py -l --maildirs $RF/maildirlist $mailname
 
 echo Creating mailbox directories
 while read md
@@ -13,7 +13,7 @@ do
 done < $RF/maildirlist
 
 # be sure they all balong to mailuser
-chown -R mailuser:mailuser /home/mailuser/users
+chown -R mailuser:mailuser /home/mailuser/mailboxes
 
 # make postfix mailbox DB
 postmap /etc/postfix/vmailbox

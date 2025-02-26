@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 #
 # EAI mail "toaster"
-# August 2024
+# Februrary 2025
 #
-# Copyright 2024 Standcore LLC
+# Copyright 2025 Standcore LLC
 
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -33,11 +33,11 @@
 # opt args are postfix and dovecot config files
 # postfix file, need entry for both A- and U-labels
 #
-# user@domain users/userN/Maildir/
+# mailbox@domain users/mailboxN/Maildir/
 #
-# dovecot file, userN since it doesn't allow 8 bit logins
+# dovecot file, mailboxN since it doesn't allow 8 bit logins
 #
-# userN:{PLAIN}password::::/home/mailuser/users/userN
+# mailboxN:{PLAIN}password::::/home/mailuser/mailboxes/mailboxN
 
 import readline
 import re
@@ -52,27 +52,27 @@ def makeusers(aname: str, uname: str, pfile: list[str], dfile: list[str], dolist
     aname is A-label domain
     return (new dfile, new pfile, list of directories)
     """
-    # list users
+    # list mailboxes
     def listusers(ulist):
         fs = "{:6s} {:10s} {:s}"
-        print(fs.format("User","Password", "Mail address"))
+        print(fs.format("Mailbox","Password", "Mail address"))
         for u in ulist:
-            print(fs.format(f"user{u}", pwds[u], f"{addrs[u]}@{uname}"))
+            print(fs.format(f"mailbox{u}", pwds[u], f"{addrs[u]}@{uname}"))
         print("")
 
-    addrs = {}                          # address for userN
-    pwds = {}                           # passwords for userN
+    addrs = {}                          # address for mailboxN
+    pwds = {}                           # passwords for mailboxN
     # read the addresses from the postfix file
     for l in pfile:
         if l[:1] in ("", "#"):  # blank or comment
             continue
-        r = re.match(r'(.*)@(.*) users/user(\d+)/Maildir/', l)
+        r = re.match(r'(.*)@(.*) mailboxes/mailbox(\d+)/Maildir/', l)
         if r:
             mbox = r.group(1)
             dom = r.group(2)
             userno = r.group(3)
             if dom in (aname, uname):
-                if mbox != 'postmaster':    # postmaster aliased to first user
+                if mbox != 'postmaster':    # postmaster aliased to first mailbox
                     addrs[int(userno)] = mbox
             else:
                 print(f"Unknown domain, ignored {l.strip()}")
@@ -84,9 +84,9 @@ def makeusers(aname: str, uname: str, pfile: list[str], dfile: list[str], dolist
     for l in dfile:
         if l[:1] in ("", "#"):  # blank or comment
             continue
-        r = re.match(r'user(\d+):\{PLAIN\}(.+?)::::/home/' + mailuser + r'/users/user(\d+)', l)
+        r = re.match(r'mailbox(\d+):\{PLAIN\}(.+?)::::/home/' + mailuser + r'/mailboxes/mailbox(\d+)', l)
         if not r or r.group(1) != r.group(3):
-            print("invalid entry in user file, ignored", l)
+            print("invalid entry in mailbox user file, ignored", l)
             continue
         pwds[int(r.group(1))] = r.group(2)
     
@@ -95,7 +95,7 @@ def makeusers(aname: str, uname: str, pfile: list[str], dfile: list[str], dolist
         maxuser = max(addrs.keys())
         # list if there are already some
         if dolist:
-            print("--- existing users ---")
+            print("--- existing mailboxes ---")
             listusers(sorted(pwds.keys()))
     else:
         maxuser = 0
@@ -104,16 +104,16 @@ def makeusers(aname: str, uname: str, pfile: list[str], dfile: list[str], dolist
     # now add some users
     while True:
         if maxuser > 0:
-            i = input("Do you want to add another user? (n) ")
+            i = input("Do you want to add another mailbox? (n) ")
             if i[:1] not in ("Y", "y"):
                 break
 
-        u = input(f"Enter mailbox name for user {maxuser+1}: ")
+        u = input(f"Enter mailbox name for mailbox {maxuser+1}: ")
         if not u or any(x in u for x in " \t\r\n:@"):
             print("Name must be printing characters, no color or @ signs, try again")
             continue
         while True:
-            p = input(f"Password for user {maxuser+1}: ")
+            p = input(f"Password for mailbox {maxuser+1}: ")
             if not p or any(z <=' ' or z>chr(127) or z==':' for z in p):
                 print("Password must be ASCII printing characters and cannot contain colons, try again")
                 continue
@@ -128,7 +128,7 @@ def makeusers(aname: str, uname: str, pfile: list[str], dfile: list[str], dolist
     dca = ""    # user numbers
     for u in ulist:
         passwd = pwds[u]
-        dca += f"user{u}:{{PLAIN}}{passwd}::::/home/{mailuser}/users/user{u}\n"
+        dca += f"mailbox{u}:{{PLAIN}}{passwd}::::/home/{mailuser}/mailboxes/mailbox{u}\n"
         
     dfile = dca
 
@@ -138,17 +138,17 @@ def makeusers(aname: str, uname: str, pfile: list[str], dfile: list[str], dolist
     didpm = False
     for u in ulist:
         mbox = addrs[u]
-        pfa += f"{mbox}@{aname} users/user{u}/Maildir/\n"
-        pfu += f"{mbox}@{uname} users/user{u}/Maildir/\n"
-        if not didpm:   # first user is postmaster
-            pfa += f"postmaster@{aname} users/user{u}/Maildir/\n"
-            pfu += f"postmaster@{uname} users/user{u}/Maildir/\n"
+        pfa += f"{mbox}@{aname} mailboxes/mailbox{u}/Maildir/\n"
+        pfu += f"{mbox}@{uname} mailboxes/mailbox{u}/Maildir/\n"
+        if not didpm:   # first mailbox is also postmaster
+            pfa += f"postmaster@{aname} mailboxes/mailbox{u}/Maildir/\n"
+            pfu += f"postmaster@{uname} mailboxes/mailbox{u}/Maildir/\n"
             didpm = True
         
     pfile = f"{pfa}\n{pfu}"
 
     # list of maildirs
-    maildirs = [ f"/home/{mailuser}/users/user{u}/Maildir/" for u in ulist ]
+    maildirs = [ f"/home/{mailuser}/mailboxes/mailbox{u}/Maildir/" for u in ulist ]
 
     if dolist:
         listusers(ulist)
@@ -156,11 +156,11 @@ def makeusers(aname: str, uname: str, pfile: list[str], dfile: list[str], dolist
         
 if __name__ == "__main__":
     import argparse
-    parser = argparse.ArgumentParser(description='Update user accounts')
+    parser = argparse.ArgumentParser(description='Update mailbox accounts')
     parser.add_argument('-d', action='store_true', help="debug info");
     parser.add_argument('-l', action='store_true', help="list accounts when done");
     parser.add_argument('--user', type=str, help="user ID for mailboxes", default='mailuser');
-    parser.add_argument('--pfile', type=str, help="postfix user file", default='/etc/postfix/vmailbox');
+    parser.add_argument('--pfile', type=str, help="postfix mailbox file", default='/etc/postfix/vmailbox');
     parser.add_argument('--dfile', type=str, help="dovecot user file", default='/etc/dovecot/users');
     parser.add_argument('--maildirs', type=str, help="maildirs to create")
     parser.add_argument('domain', type=str, help="Mail domain name");

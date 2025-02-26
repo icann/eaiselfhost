@@ -1,6 +1,6 @@
 # Make auxiliary tar file
 
-FILES=makeusers.py checkdns.py addmbox
+FILES=makeboxes.py checkdns.py addmbox
 
 
 eaifiles.tar: ${FILES}

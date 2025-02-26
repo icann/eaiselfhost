@@ -205,7 +205,7 @@ def checkspf(domain: str):
 
 if __name__ == "__main__":
     import argparse
-    parser = argparse.ArgumentParser(description='Update user accounts')
+    parser = argparse.ArgumentParser(description='Check DNS for EAI mail server')
     parser.add_argument('-d', action='store_true', help="debug info");
     parser.add_argument('--dkim', type=str, help="DKIM key record");
     parser.add_argument('maildomain', type=str, help="Mail domain name");

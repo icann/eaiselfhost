@@ -1,9 +1,9 @@
 #!/bin/bash
 #
 # EAI mail "toaster"
-# August 2024
+# February 2025
 #
-# Copyright 2024 Standcore LLC
+# Copyright 2025 Standcore LLC
 
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -166,6 +166,7 @@ spamass-milter
 spamassassin
 spamd
 "
+
 if $dovecot
 then
 PACKAGES="$PACKAGES
@@ -183,6 +184,12 @@ fi
 echo "Installing initial software"
 echo ""
 # snapshots are usually out of date
+echo "Before we can install new software, we need to upgrade any preinstalled software.
+The upgrade process usually produces a great deal of output.  It may show pages
+telling you that the system needs to be restarted.  If it does, press Enter to
+continue.  You can restart the system after installation is complete."
+printf "Press Enter to proceed "; read x
+
 echo "=== update software catalog"
 apt-get -q -y update
 echo "=== upgrade preinstalled packages"
@@ -358,7 +365,7 @@ sedfile master.cf <<EOF
 EOF
 
 # create or update
-python3 $RF/makeusers.py -l --maildirs $RF/maildirlist $mailname
+python3 $RF/makeboxes.py -l --maildirs $RF/maildirlist $mailname
 
 echo Creating mailbox directories
 while read md
@@ -367,7 +374,7 @@ do
 done < $RF/maildirlist
 
 # be sure they all balong to mailuser
-chown -R mailuser:mailuser /home/mailuser/users
+chown -R mailuser:mailuser /home/mailuser/mailboxes
 
 # make postfix mailbox DB
 postmap /etc/postfix/vmailbox >>$LOGFILE
