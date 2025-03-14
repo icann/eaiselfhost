@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 #
 # EAI mail "toaster"
-# December 2024
+# March 2025
 #
-# Copyright 2024 Standcore LLC
+# Copyright 2025 Standcore LLC
 
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -41,8 +41,8 @@ import requests
 debug = False
 
 # returns v4 or v6 address you connected from
-ip4url = "https://ip4.me/api/"
-ip6url = "https://ip6.me/api/"
+ip4url = "https://api4.ipify.org/"
+ip6url = "https://api64.ipify.org/"
 
 def getips():
     """
@@ -52,20 +52,24 @@ def getips():
 
     r = requests.get(ip4url)
     if r.status_code == 200:
-        tv = r.text.split(',')
-        if tv[0] == 'IPv4':
-            ipv4 = tv[1]
+        if "." in r.text:
+            ipv4 = r.text
         else:
             print(f"strange IPv4 address {r.text}")
+    else:
+        print(f"IP address lookup fail {r}")
+        exit(1)
 
     r = requests.get(ip6url)
     if r.status_code == 200:
-        tv = r.text.split(',')
-        if tv[0] == 'IPv6':
-            ipv6 = tv[1]
-        elif tv[0] != 'IPv4':      
+        if ":" in r.text:
+            ipv6 = r.text
+        elif "." in r.text:
+            pass    # fall back to 4
+        else:
             print(f"strange IPv6 address {r.text}")
 
+    print(f"v4 {ipv4} v6 {ipv6}")
     return (ipv4, ipv6)
 
 def checkhost(domain: str, ipv4: str, ipv6: str | None):
