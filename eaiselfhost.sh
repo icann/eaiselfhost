@@ -83,7 +83,7 @@ then
     else
 	# get tarfile and put it where we can find it
 	echo "=== fetch auxilary files in $TARFILE"
-	if $TARSRC
+	if wget $TARSRC
 	then
 	    cp $TARFILE /tmp
 	else
