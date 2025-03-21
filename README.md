@@ -10,3 +10,8 @@ https://docs.google.com/document/d/1azNEZAdk6wyg0PNHBuXWWrKF1ZexQjv0Txyd1zaU8O8/
 
 A set of tutorial slides are here:
 https://docs.google.com/presentation/d/1dva_lS7nMJNx8mgRQExMy0jGONUGaLFMiM8Q5zKN4UA/edit?usp=sharing
+
+To use the scripts, see the documentation to see how to set up a virtual server
+and the necessary DNS records.  Once you have done that, the script to run is here:
+
+https://github.com/jrlevine/eaiselfhost/raw/refs/heads/main/eaiselfhost.sh

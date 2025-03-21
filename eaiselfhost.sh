@@ -1,7 +1,7 @@
 #!/bin/bash
 #
 # EAI mail "toaster"
-# February 2025
+# March 2025
 #
 # Copyright 2025 Standcore LLC
 
@@ -32,6 +32,7 @@
 # installation log goes here
 LOGFILE=/tmp/install-log
 TARFILE=eaifiles.tar
+TARSRC=https://github.com/jrlevine/eaiselfhost/raw/refs/heads/main/eaifiles.tar
 
 # all commands are expected to succeed
 set -e
@@ -82,7 +83,7 @@ then
     else
 	# get tarfile and put it where we can find it
 	echo "=== fetch auxilary files in $TARFILE"
-	if wget https://www.standcore.com/$TARFILE
+	if $TARSRC
 	then
 	    cp $TARFILE /tmp
 	else
