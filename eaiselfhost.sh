@@ -32,7 +32,7 @@
 # installation log goes here
 LOGFILE=/tmp/install-log
 TARFILE=eaifiles.tar
-TARSRC=https://github.com/jrlevine/eaiselfhost/raw/refs/heads/main/eaifiles.tar
+TARSRC=https://github.com/icann/eaiselfhost/raw/refs/heads/main/eaifiles.tar
 
 # idn2 doesn't work reliably with any other encoding
 export LANG=en_US.UTF-8
