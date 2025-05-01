@@ -493,6 +493,15 @@ do
 EOF
 done
 
+# add some roundcube defaults
+sedfile /var/lib/roundcube/config/config.inc.php <<EOF
+\$a\\
+\\
+# local config\\
+\$config['mail_domain'] = '$umailname';\\
+\$config['default_charset'] = 'UTF-8';
+EOF
+
 # link in and enable roundcube in case not there yet
 (cd /etc/apache2/conf-available; ln -sf /etc/roundcube/apache.conf roundcube.conf)
 a2enconf roundcube >>$LOGFILE
