@@ -15,3 +15,10 @@ To use the scripts, see the documentation to see how to set up a virtual server
 and the necessary DNS records.  Once you have done that, the script to run is here:
 
 https://github.com/icann/eaiselfhost/raw/refs/heads/main/eaiselfhost.sh
+
+##Project info
+The project report is in this Google Doc:
+https://docs.google.com/document/d/1ThjISfMkAn6bP0yTXP-uBHebvMkPwr3LxuG_B4YnxHo/edit?usp=sharing
+
+The slides for a presentation about it are here:
+https://docs.google.com/presentation/d/1yYLgocF9bQhORAGKgqwkUoFSmmh0RDsZ175q2fn0eT8/edit?usp=sharing
