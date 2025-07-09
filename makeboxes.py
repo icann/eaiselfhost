@@ -3,7 +3,7 @@
 # EAI mail "toaster"
 # Februrary 2025
 #
-# Copyright 2025 Standcore LLC
+# Copyright 2025 ICANN
 
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
